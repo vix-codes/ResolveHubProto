@@ -14,7 +14,6 @@ import ComplaintManagement from './pages/admin/ComplaintManagement';
 import Analytics from './pages/admin/Analytics';
 import AssignedComplaints from './pages/technician/AssignedComplaints';
 
-// Redirect "/" to the right dashboard based on the user's role
 const HomeRedirect = () => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
@@ -24,80 +23,65 @@ const HomeRedirect = () => {
   return <Navigate to="/login" replace />;
 };
 
+// Wraps all regular (non-auth) pages in the centered layout container
+const PageLayout = ({ children }) => (
+  <div className="main-container">{children}</div>
+);
+
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Navbar />
-        <div className="main-container">
-          <Routes>
-            <Route path="/" element={<HomeRedirect />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
 
-            {/* Tenant routes */}
-            <Route
-              path="/tenant/dashboard"
-              element={
-                <ProtectedRoute role="tenant">
-                  <TenantDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/tenant/create"
-              element={
-                <ProtectedRoute role="tenant">
-                  <CreateComplaint />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/tenant/complaints"
-              element={
-                <ProtectedRoute role="tenant">
-                  <MyComplaints />
-                </ProtectedRoute>
-              }
-            />
+        <Routes>
+          <Route path="/" element={<HomeRedirect />} />
 
-            {/* Admin routes */}
-            <Route
-              path="/admin/dashboard"
-              element={
-                <ProtectedRoute role="admin">
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/complaints"
-              element={
-                <ProtectedRoute role="admin">
-                  <ComplaintManagement />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/analytics"
-              element={
-                <ProtectedRoute role="admin">
-                  <Analytics />
-                </ProtectedRoute>
-              }
-            />
+          {/* Auth pages — no container wrapper, they use their own split layout */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-            {/* Technician routes */}
-            <Route
-              path="/technician/complaints"
-              element={
-                <ProtectedRoute role="technician">
-                  <AssignedComplaints />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </div>
+          {/* Tenant */}
+          <Route path="/tenant/dashboard" element={
+            <PageLayout>
+              <ProtectedRoute role="tenant"><TenantDashboard /></ProtectedRoute>
+            </PageLayout>
+          } />
+          <Route path="/tenant/create" element={
+            <PageLayout>
+              <ProtectedRoute role="tenant"><CreateComplaint /></ProtectedRoute>
+            </PageLayout>
+          } />
+          <Route path="/tenant/complaints" element={
+            <PageLayout>
+              <ProtectedRoute role="tenant"><MyComplaints /></ProtectedRoute>
+            </PageLayout>
+          } />
+
+          {/* Admin */}
+          <Route path="/admin/dashboard" element={
+            <PageLayout>
+              <ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>
+            </PageLayout>
+          } />
+          <Route path="/admin/complaints" element={
+            <PageLayout>
+              <ProtectedRoute role="admin"><ComplaintManagement /></ProtectedRoute>
+            </PageLayout>
+          } />
+          <Route path="/admin/analytics" element={
+            <PageLayout>
+              <ProtectedRoute role="admin"><Analytics /></ProtectedRoute>
+            </PageLayout>
+          } />
+
+          {/* Technician */}
+          <Route path="/technician/complaints" element={
+            <PageLayout>
+              <ProtectedRoute role="technician"><AssignedComplaints /></ProtectedRoute>
+            </PageLayout>
+          } />
+        </Routes>
       </BrowserRouter>
     </AuthProvider>
   );

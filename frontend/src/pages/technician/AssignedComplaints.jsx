@@ -52,7 +52,7 @@ const AssignedComplaints = () => {
             </div>
           ) : (
             complaints.map((c) => (
-              <div key={c._id} className="complaint-card tech-card">
+              <div key={c._id} className={`complaint-card tech-card pri-${c.priority.toLowerCase()}`}>
                 <div className="complaint-top">
                   <strong>{c.title}</strong>
                   <span className={`badge badge-status-${c.status.toLowerCase().replace(' ', '-')}`}>
