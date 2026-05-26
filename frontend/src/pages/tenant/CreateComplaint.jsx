@@ -80,8 +80,8 @@ const CreateComplaint = () => {
 
             <div className="ai-info-box">
               <span className="ai-icon">AI</span>
-              Gemini AI will automatically detect the category (Plumbing, Electrical, etc.)
-              and priority (Low, Medium, High) from your description.
+              AI will automatically detect the category
+              and priority from your description.
             </div>
 
             <button type="submit" className="btn btn-primary" disabled={loading}>
