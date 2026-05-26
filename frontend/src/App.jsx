@@ -4,84 +4,51 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 
-import Login from './pages/Login';
-import Register from './pages/Register';
-import TenantDashboard from './pages/tenant/TenantDashboard';
-import CreateComplaint from './pages/tenant/CreateComplaint';
-import MyComplaints from './pages/tenant/MyComplaints';
-import AdminDashboard from './pages/admin/AdminDashboard';
+import Login               from './pages/Login';
+import Register            from './pages/Register';
+import TenantDashboard     from './pages/tenant/TenantDashboard';
+import CreateComplaint     from './pages/tenant/CreateComplaint';
+import MyComplaints        from './pages/tenant/MyComplaints';
+import AdminDashboard      from './pages/admin/AdminDashboard';
 import ComplaintManagement from './pages/admin/ComplaintManagement';
-import Analytics from './pages/admin/Analytics';
-import AssignedComplaints from './pages/technician/AssignedComplaints';
+import Analytics           from './pages/admin/Analytics';
+import AssignedComplaints  from './pages/technician/AssignedComplaints';
 
+// Send the user to the right dashboard based on their role
 const HomeRedirect = () => {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/login" replace />;
-  if (user.role === 'tenant') return <Navigate to="/tenant/dashboard" replace />;
-  if (user.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
+  if (!user)                    return <Navigate to="/login" replace />;
+  if (user.role === 'tenant')   return <Navigate to="/tenant/dashboard" replace />;
+  if (user.role === 'admin')    return <Navigate to="/admin/dashboard" replace />;
   if (user.role === 'technician') return <Navigate to="/technician/complaints" replace />;
   return <Navigate to="/login" replace />;
 };
-
-// Wraps all regular (non-auth) pages in the centered layout container
-const PageLayout = ({ children }) => (
-  <div className="main-container">{children}</div>
-);
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Navbar />
+        <div className="main-container">
+          <Routes>
+            <Route path="/" element={<HomeRedirect />} />
+            <Route path="/login"    element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-        <Routes>
-          <Route path="/" element={<HomeRedirect />} />
+            {/* Tenant */}
+            <Route path="/tenant/dashboard"  element={<ProtectedRoute role="tenant"><TenantDashboard /></ProtectedRoute>} />
+            <Route path="/tenant/create"     element={<ProtectedRoute role="tenant"><CreateComplaint /></ProtectedRoute>} />
+            <Route path="/tenant/complaints" element={<ProtectedRoute role="tenant"><MyComplaints /></ProtectedRoute>} />
 
-          {/* Auth pages — no container wrapper, they use their own split layout */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+            {/* Admin */}
+            <Route path="/admin/dashboard"   element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/complaints"  element={<ProtectedRoute role="admin"><ComplaintManagement /></ProtectedRoute>} />
+            <Route path="/admin/analytics"   element={<ProtectedRoute role="admin"><Analytics /></ProtectedRoute>} />
 
-          {/* Tenant */}
-          <Route path="/tenant/dashboard" element={
-            <PageLayout>
-              <ProtectedRoute role="tenant"><TenantDashboard /></ProtectedRoute>
-            </PageLayout>
-          } />
-          <Route path="/tenant/create" element={
-            <PageLayout>
-              <ProtectedRoute role="tenant"><CreateComplaint /></ProtectedRoute>
-            </PageLayout>
-          } />
-          <Route path="/tenant/complaints" element={
-            <PageLayout>
-              <ProtectedRoute role="tenant"><MyComplaints /></ProtectedRoute>
-            </PageLayout>
-          } />
-
-          {/* Admin */}
-          <Route path="/admin/dashboard" element={
-            <PageLayout>
-              <ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>
-            </PageLayout>
-          } />
-          <Route path="/admin/complaints" element={
-            <PageLayout>
-              <ProtectedRoute role="admin"><ComplaintManagement /></ProtectedRoute>
-            </PageLayout>
-          } />
-          <Route path="/admin/analytics" element={
-            <PageLayout>
-              <ProtectedRoute role="admin"><Analytics /></ProtectedRoute>
-            </PageLayout>
-          } />
-
-          {/* Technician */}
-          <Route path="/technician/complaints" element={
-            <PageLayout>
-              <ProtectedRoute role="technician"><AssignedComplaints /></ProtectedRoute>
-            </PageLayout>
-          } />
-        </Routes>
+            {/* Technician */}
+            <Route path="/technician/complaints" element={<ProtectedRoute role="technician"><AssignedComplaints /></ProtectedRoute>} />
+          </Routes>
+        </div>
       </BrowserRouter>
     </AuthProvider>
   );
