@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import API from '../../api/axios';
+import { API } from '../../context/AuthContext';
 
 const STATUSES = ['All', 'Pending', 'Assigned', 'In Progress', 'Resolved'];
 

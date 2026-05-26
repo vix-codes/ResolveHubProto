@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import API from '../../api/axios';
+import { API } from '../../context/AuthContext';
 
 const CreateComplaint = () => {
   const [form, setForm] = useState({ title: '', description: '' });

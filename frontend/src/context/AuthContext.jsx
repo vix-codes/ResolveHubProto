@@ -1,4 +1,14 @@
 import React, { createContext, useContext, useState } from 'react';
+import axios from 'axios';
+
+// Axios instance with /api base URL.
+// The interceptor attaches the JWT so every request is automatically authenticated.
+export const API = axios.create({ baseURL: '/api' });
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
 const AuthContext = createContext();
 
@@ -28,5 +38,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom hook so any component can access auth state easily
 export const useAuth = () => useContext(AuthContext);
